@@ -13,7 +13,7 @@ import Select from "react-select";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function Addlead() {
+function Addlead() { 
   const apiUrl = process.env.REACT_APP_API_URL;
   const DBuUrl = process.env.REACT_APP_DB_URL;
   const formRef = React.useRef(null);
@@ -45,12 +45,12 @@ function Addlead() {
     const limitedValue = numericValue.slice(0, 10);
 
     // Update state with the sanitized value
-    setleaddata({
+    setleaddata({  
       ...leaddata,
       contact_no: limitedValue,
     });
   };
-  const submitLead = async (e) => {
+  const submitLead = async (e) => { 
     e.preventDefault();
     const length = leaddata?.contact_no?.length;
     const length1 = leaddata?.alternative_no?.length;
@@ -85,6 +85,7 @@ function Addlead() {
         commented_id:localStorage.getItem("user_id"),
       };
       const aaaa = await dispatch(addlead(updatedLeadData));
+      console.log('aaaa',aaaa)
       if (aaaa.payload.success == true) {
         toast.success(aaaa.payload.message);
         if (buttonValue === "save") {
@@ -119,7 +120,7 @@ function Addlead() {
         dispatch(getAllStatus());
         dispatch(getAllCountry());
         // await new Promise(resolve => setTimeout(resolve, 2000));
-        if(localStorage.getItem("role")==='admin'){
+        if(localStorage.getItem("role")==='admin'){ 
           dispatch(getAllAgent());
         }
         if(localStorage.getItem("role")==='TeamLeader'){

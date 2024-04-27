@@ -1,10 +1,10 @@
 import { Tooltip } from "bootstrap";
 import React, { useState } from "react";
-
+import randomcolor from 'randomcolor';
 import { Link } from "react-router-dom";
 import LineChart from "./LineChart";
 import LineChart1 from "./LineChart1";
-import { getAllAgent } from "../features/agentSlice";
+import { getAllAgent, getAllAgentWithData } from "../features/agentSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Chart from 'react-apexcharts';
@@ -26,7 +26,7 @@ function Home() {
     const fetchData1 = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        dispatch(getAllAgent());
+        // dispatch(getAllAgent());
         dispatch(getAllLeadSource())
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -34,10 +34,99 @@ function Home() {
     };
     fetchData1();
 
-    // getAllUnassignLead();
+    if (localStorage.getItem("role") === "admin") {
+      getSale()
+      getAllLeadSourceOverview()
+      dispatch(getAllAgent());
+      getHigstNoOfCall();
+      getLeadCountData();
+      AgentWishLeadCount1({ role: localStorage.getItem("user_id"), user_id: localStorage.getItem("user_id") })
+    }
+    if (localStorage.getItem("role") === "TeamLeader") {
+      YearlySaleApiForTeamLeader()
+      LeadSourceOverviewApiForTeamLeader()
+      DashboardLeadCountOfUserByTeamLeader();
+      dispatch(getAllAgentWithData({ assign_to_agent: localStorage.getItem("user_id") }));
+      GetUserCallAccordingToTeamLeader(localStorage.getItem("user_id"))
+      AgentWishLeadCount1({ role: localStorage.getItem("user_id"), user_id: localStorage.getItem("user_id") })
+    }
+    if (localStorage.getItem("role") === "user") {
+      YearlySaleApiForUser()
+      LeadSourceOverviewApiForUser()
+      DashboardLeadCountOfUser();
+      dispatch(getAllAgent({ assign_to_agent: localStorage.getItem("user_id") }));
+      getHigstNoOfCall();
+      AgentWishLeadCount1({ role: localStorage.getItem("user_id"), user_id: localStorage.getItem("user_id") })
+    }
+
+
+
 
 
   }, []);
+
+
+  const [Detail, setDetail] = useState([]);
+  const [LeadCount, setLeadCount] = useState([]);
+
+
+  const AgentWishLeadCount1 = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/AgentWishLeadCount1`,
+        { role: localStorage.getItem("role"), user_id: localStorage.getItem("user_id") },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "mongodb-url": DBuUrl,
+          }
+        }
+      );
+      setLeadCount(responce?.data?.Count);
+    } catch (error) {
+
+      console.log(error);
+      setLeadCount(error.responce?.data?.Count);
+    }
+  }
+
+  const getHigstNoOfCall = async () => {
+    try {
+      const responce = await axios.get(
+        `${apiUrl}/GetAllUserCallLogById/`, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setDetail(responce?.data?.array);
+    } catch (error) {
+
+      console.log(error);
+      setDetail(error.responce?.data?.array);
+    }
+  }
+  const GetUserCallAccordingToTeamLeader = async (assign_to_agent) => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/GetUserCallAccordingToTeamLeader`, {
+        assign_to_agent,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setDetail(responce?.data?.array);
+    } catch (error) {
+
+      console.log(error);
+      setDetail(error.responce?.data?.array);
+    }
+  }
+
 
   const getSale = async () => {
     try {
@@ -52,13 +141,49 @@ function Home() {
       setSale(responce?.data?.details);
 
     } catch (error) {
-      const message = await error?.response?.data?.message;
-      if (message == 'Client must be connected before running operations' || message == 'Internal Server Error') {
-        getSale();
-      }
+
       console.log(error);
     }
   };
+
+  const YearlySaleApiForTeamLeader = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/YearlySaleApiForTeamLeader`, {
+        user_id: localStorage.getItem("user_id"),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setSale(responce?.data?.details);
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  }
+  const YearlySaleApiForUser = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/YearlySaleApiForUser`, {
+        user_id: localStorage.getItem("user_id"),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setSale(responce?.data?.details);
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  }
 
   const getAllLeadSourceOverview = async () => {
     try {
@@ -75,13 +200,51 @@ function Home() {
       setleadsource(responce?.data?.Lead_source_name);
 
     } catch (error) {
-      const message = await error?.response?.data?.message;
-      if (message == 'Client must be connected before running operations' || message == 'Internal Server Error') {
-        getAllLeadSourceOverview();
-      }
       console.log(error);
     }
   }
+  const LeadSourceOverviewApiForTeamLeader = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/LeadSourceOverviewApiForTeamLeader`, {
+        user_id: localStorage.getItem("user_id"),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setleadsourcedata(responce?.data?.Lead_source_count);
+      setleadsource(responce?.data?.Lead_source_name);
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  }
+  const LeadSourceOverviewApiForUser = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/LeadSourceOverviewApiForUser`, {
+        user_id: localStorage.getItem("user_id"),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setleadsourcedata(responce?.data?.Lead_source_count);
+      setleadsource(responce?.data?.Lead_source_name);
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  }
+
+
   const [leadcountdata, setleadcountdata] = useState({});
   const getLeadCountData = async () => {
     try {
@@ -96,13 +259,52 @@ function Home() {
       setleadcountdata(responce?.data?.Count);
     } catch (error) {
       const message = await error?.response?.data?.message;
-      console.log('djvjk', message);
       if (message == 'Client must be connected before running operations' || message == 'Internal Server Error') {
-        getLeadCountData();
+        // getLeadCountData();
       }
       console.log(error);
     }
   }
+  const DashboardLeadCountOfUser = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/DashboardLeadCountOfUser`, {
+        user_id: localStorage.getItem("user_id"),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setleadcountdata(responce?.data?.Count);
+    } catch (error) {
+
+      console.log(error);
+      setleadcountdata(error.responce?.data?.Count);
+    }
+  }
+  const DashboardLeadCountOfUserByTeamLeader = async () => {
+    try {
+      const responce = await axios.post(
+        `${apiUrl}/DashboardLeadCountOfUserByTeamLeader`, {
+        user_id: localStorage.getItem("user_id"),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "mongodb-url": DBuUrl,
+        }
+      }
+      );
+      setleadcountdata(responce?.data?.Count);
+    } catch (error) {
+
+      console.log(error);
+      setleadcountdata(error.responce?.data?.Count);
+    }
+  }
+
+
 
   // const getAllUnassignLead=async()=>{
   //   try {
@@ -119,13 +321,12 @@ function Home() {
   //     console.log(error);
   //   }
   // }
-  useEffect(() => {
-    getSale()
-    getLeadCountData();
-    getAllLeadSourceOverview()
-  }, []);
+
+
+  const colors = randomcolor({ count: leadsourcedata1.length });
   const options = {
     labels: leadsource,
+    colors: colors,
   };
   return (
     <div>
@@ -133,7 +334,7 @@ function Home() {
       <div className="content-wrapper">
         <section className="content py-5">
           <div className="container ">
-            <div className="row">
+            <div className="row d-none">
               <div className="col-12 col-lg-6 col-md-6 col-xl-6 pl-0 ">
                 <div className="cardbox02">
                   <div className="panel-body new_leads bd-panel">
@@ -163,7 +364,7 @@ function Home() {
                   leadcountdata?.map((leadcountdata1, index) => (
                     leadcountdata1?.name === 'Followup Lead' ? (
                       <div className="col-xs-6 col-sm-6 col-md-6 pl-0 dashboard-fixeds col-lg-4" key={index}>
-                        <Link to="/leads">  <div className={`buttons-30 border-lefts${index + 1} mb-4`} role="button">
+                        <Link to="/followupleads">  <div className={`buttons-30 border-lefts${index + 1} mb-4`} role="button">
                           <div className="text-center pt-3">
                             <div className="flex items-center justify-center mx-auto text-red-500 bg-red-100 rounded-full size-14 dark:bg-red-500/20">
                               <i className="fa fa-solid fa-users text-red-500"></i>
@@ -174,7 +375,7 @@ function Home() {
                         </div></Link>
                       </div>
                     ) : leadcountdata1?.name === 'Total Agent' ? (
-                      localStorage.getItem("role") === 'admin' ? ( 
+                      localStorage.getItem("role") === 'admin' ? (
                         <div className="col-xs-6 col-sm-6 col-md-6 pl-0 dashboard-fixeds col-lg-4" key={index}>
                           <Link to="/Setting">    <div className={`buttons-30 border-lefts${index + 1} mb-4`} role="button">
                             <div className="text-center pt-3">
@@ -185,7 +386,7 @@ function Home() {
                               <p className="text-slate-500 dark:text-zink-200">{leadcountdata1?.Value}</p>
                             </div>
                           </div></Link>
-                        </div> 
+                        </div>
                       ) : (<div className="col-xs-6 col-sm-6 col-md-6 pl-0 dashboard-fixeds col-lg-4" key={index}>
                         <Link to="#">    <div className={`buttons-30 border-lefts${index + 1} mb-4`} role="button">
                           <div className="text-center pt-3">
@@ -200,7 +401,7 @@ function Home() {
 
                     ) : (
                       <div className="col-xs-6 col-sm-6 col-md-6 pl-0 dashboard-fixeds col-lg-4" key={index}>
-                        <Link to="/followupleads">    <div className={`button-30 border-lefts${index + 1} mb-4`} role="button">
+                        <Link to={`/ImpSchedule/${leadcountdata1?.id}`}>    <div className={`button-30 border-lefts${index + 1} mb-4`} role="button">
                           <div className="text-center pt-3">
                             <div className="flex items-center justify-center mx-auto text-red-500 1 bg-custom-100 rounded-full size-14 dark:bg-red-500/20">
                               {index == 3 ? (<i className={`fa fa-solid fa-lightbulb-o text-custom-500 2`}>
@@ -214,7 +415,6 @@ function Home() {
                             <p className="text-slate-500 dark:text-zink-200">{leadcountdata1?.Value} - {leadcountdata1?.Value1}</p>
                           </div>
                         </div></Link>
-
                       </div>
 
                     )
@@ -463,32 +663,75 @@ function Home() {
                             </div>
                           </div>
                         </li>
-                        {agent?.agent?.map((agent1, key) => {
-                          return (
-                            <li className="mb-3 d-flex justify-content-between align-items-center">
-                              <div className="bg-label-success rounded">
-                                <img src="img/user_img.jpg" alt="User" className="rounded-circle me-3" width="28" />
-                              </div>
-                              <div className="d-flex justify-content-between w-100 flex-wrap">
-                                <h6 className="mb-0 ms-3">   {agent1.agent_name}</h6>
-                                <div className="d-flex">
+                        {Detail?.map((Details, key) => {
+                          const converttime = (ffgfgf) => {
+                            const second = ffgfgf;
+                            const hours = Math.floor(second / 3600);
+                            const minutes = Math.floor((second % 3600) / 60);
+                            const remainingSeconds = second % 60;
+                            const timeconverted = hours + 'h ' + minutes + 'm ' + remainingSeconds + 's';
+                            return timeconverted;
+                          };
+                          // Check if the user is a 'user' or not
+                          const isUser = localStorage.getItem("role") === 'user';
+
+                          // Check if the Details.user_id matches the logged-in user's user_id
+                          const isCurrentUser = Details.user_id === localStorage.getItem("user_id");
+
+                          if (isUser && isCurrentUser) {
+                            return (
+                              <li className="mb-3 d-flex justify-content-between align-items-center">
+                                <div className="bg-label-success rounded">
+                                  <img src="img/user_img.jpg" alt="User" className="rounded-circle me-3" width="28" />
                                 </div>
-                              </div>
-                              <div className="d-flex justify-content-between phone_btns w-100 flex-wrap">
-                                <h6 className="mb-0 ms-3"> <i className="fa fa-phone" aria-hidden="true"></i> 20  </h6>
-                                <div className="d-flex">
+                                <div className="d-flex justify-content-between w-100 flex-wrap">
+                                  <h6 className="mb-0 ms-3">   {Details?.username}</h6>
+                                  <div className="d-flex">
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="d-flex  w-30">
-                                <h6 className="mb-0 ms-3">
-                                  <span className="badge badge-primary light border-0">0h 50m 2s</span></h6>
-                                <div className="d-flex">
+                                <div className="d-flex justify-content-between phone_btns w-100 flex-wrap">
+                                  <h6 className="mb-0 ms-3"> <i className="fa fa-phone" aria-hidden="true"></i> {Details?.HigstNoOfCall}  </h6>
+                                  <div className="d-flex">
+                                  </div>
                                 </div>
-                              </div>
-                            </li>
+                                <div className="d-flex  w-30">
+                                  <h6 className="mb-0 ms-3">
+                                    <span className="badge badge-primary light border-0">{converttime(Details?.TotalTime)}</span></h6>
+                                  <div className="d-flex">
+                                  </div>
+                                </div>
+                              </li>
+                            );
+                          } else if (!isUser) {
+                            // Render for non-user role
+                            return (
+                              <li className="mb-3 d-flex justify-content-between align-items-center">
+                                <div className="bg-label-success rounded">
+                                  <img src="img/user_img.jpg" alt="User" className="rounded-circle me-3" width="28" />
+                                </div>
+                                <div className="d-flex justify-content-between w-100 flex-wrap">
+                                  <h6 className="mb-0 ms-3">   {Details?.username}</h6>
+                                  <div className="d-flex">
+                                  </div>
+                                </div>
+                                <div className="d-flex justify-content-between phone_btns w-100 flex-wrap">
+                                  <h6 className="mb-0 ms-3"> <i className="fa fa-phone" aria-hidden="true"></i> {Details?.HigstNoOfCall}  </h6>
+                                  <div className="d-flex">
+                                  </div>
+                                </div>
+                                <div className="d-flex  w-30">
+                                  <h6 className="mb-0 ms-3">
+                                    <span className="badge badge-primary light border-0">{converttime(Details?.TotalTime)}</span></h6>
+                                  <div className="d-flex">
+                                  </div>
+                                </div>
+                              </li>
+                            );
+                          } else {
+                            return null; // Render nothing if not a user and not the current user
+                          }
 
 
-                          );
                         })}
                       </ul>
                     </div>
@@ -530,14 +773,14 @@ function Home() {
 
 
                         </li>
-                        {agent?.agent?.map((agent1, key) => {
+                        {LeadCount?.map((LeadCount1, key) => {
                           return (
                             <li className="mb-3 d-flex justify-content-between align-items-center">
                               <div className="badge bg-label-secondaryess p-2 me-3 rounded svg-icons-prev">
                                 <i className="fab fa fa-user" aria-hidden="true"></i>
                               </div>
                               <div className="d-flex justify-content-between w-100 flex-wrap">
-                                <h6 className="mb-0 ms-3">   {agent1.agent_name}</h6>
+                                <h6 className="mb-0 ms-3">   {LeadCount1?.name}</h6>
                                 <div className="d-flex">
                                 </div>
                               </div>
@@ -547,7 +790,7 @@ function Home() {
                                 </div>
                               </div>
                               <div className="d-flex  w-30">
-                                <h6 className="mb-0 ms-3"> <span className="badge badge-primaryess light border-0">400</span></h6>
+                                <h6 className="mb-0 ms-3"> <span className="badge badge-primaryess light border-0">{LeadCount1?.Value}</span></h6>
                                 <div className="d-flex">
                                 </div>
                               </div>
@@ -590,7 +833,7 @@ function Home() {
                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                           <div className="me-2">
                             <div className="d-flex align-items-center">
-                              <h6 className="mb-0 me-1">E-Commerce</h6>
+                              <h6 className="mb-0 me-1">Bhutani Infra</h6>
                             </div>
 
                           </div>
@@ -609,7 +852,7 @@ function Home() {
                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                           <div className="me-2">
                             <div className="d-flex align-items-center">
-                              <h6 className="mb-0 me-1">Real-Estate</h6>
+                              <h6 className="mb-0 me-1">DLF</h6>
                             </div>
 
                           </div>
@@ -628,7 +871,7 @@ function Home() {
                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                           <div className="me-2">
                             <div className="d-flex align-items-center">
-                              <h6 className="mb-0 me-1">WhatsApp</h6>
+                              <h6 className="mb-0 me-1">M3M</h6>
                             </div>
 
                           </div>
@@ -646,7 +889,7 @@ function Home() {
                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                           <div className="me-2">
                             <div className="d-flex align-items-center">
-                              <h6 className="mb-0 me-1">Web Maintenance Qtly</h6>
+                              <h6 className="mb-0 me-1">Godrej Properties</h6>
                             </div>
 
                           </div>
@@ -664,7 +907,7 @@ function Home() {
                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                           <div className="me-2">
                             <div className="d-flex align-items-center">
-                              <h6 className="mb-0 me-1">Website Maintenance</h6>
+                              <h6 className="mb-0 me-1">Tata Housing</h6>
                             </div>
 
                           </div>

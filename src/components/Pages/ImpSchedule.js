@@ -2,13 +2,13 @@ import React, { Fragment, useState, useEffect } from "react";
 import { addlead, getAllLead } from "../../features/leadSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from "../Loader";
-import { Allleadstable } from "./Allleadstable";
+import { ScheduleEvent } from "./ScheduleEvent";
 import { Link } from "react-router-dom";
 import { getAllAgent } from "../../features/agentSlice";
 import { getAllStatus } from "../../features/statusSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
-function Leads() {
+function ImpSchedule() {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
   const { lead, loading } = useSelector((state) => state.lead);
@@ -20,7 +20,7 @@ function Leads() {
   useEffect(() => {
     dispatch(getAllLead());
     
-    dispatch(getAllStatus());   
+    dispatch(getAllStatus());
   }, []);
   const BulkAction = async (e) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ function Leads() {
         toast.warn(response.data.message);
       }
       if (response.data.success === true) {
-        // window.location.reload(false);
+        window.location.reload(false);
         toast.success(response.data.message);
 
       }
@@ -83,19 +83,19 @@ function Leads() {
               <div className="row export-data">
                 <div className="col-md-5 col-xs-12 pl-1 pt-2">
                   <div className="row">
-                    <div className="col-md-4 col-sm-4 col-xs-6">
+                    <div className="col-md-4 col-sm-4 col-xs-6 d-none">
                       <div className="btn-group btn-groupese">
                         <Link className="btn btnes exports" to="/Addlead"> <i className="fa fa-plus" />&nbsp;  Add Lead </Link>
                       </div>
                     </div>
-                    <div className="col-md-4 col-sm-4 mobil-nns col-xs-4">
+                    <div className="col-md-4 col-sm-4 mobil-nns col-xs-4 d-none">
                       <div className="btn-group btn-groupese">
                         <button className="btn btnes exports" onClick={advanceserch}>
                           <i class="fa fa-search" aria-hidden="true"></i>
                           &nbsp;  Advance </button>
                       </div>
                     </div>
-                    <div className="col-md-4 col-sm-4 col-xs-6">
+                    <div className="col-md-4 col-sm-4 col-xs-6 d-none">
                       <div className="btn-group btn-groupese">
                         <Link className="btn btnes exports" to="/import-lead"> <i className="fa fa-download" />&nbsp; Import </Link>
                       </div>
@@ -104,7 +104,7 @@ function Leads() {
 
                   </div>
                 </div>
-                <div className="col-md-7 col-xs-12 ">
+                <div className="col-md-7 col-xs-12 d-none">
                   <div className="ipades pt-2" >
                     <form onSubmit={BulkAction}>
                       <div className="row">
@@ -157,7 +157,7 @@ function Leads() {
 
               <div className="pt-3 row pl-0">
                 <div className="col-12 pl-0">
-                  <Allleadstable sendDataToParent={handleChildData} dataFromParent={none} />
+                  <ScheduleEvent sendDataToParent={handleChildData} dataFromParent={none} />
                 </div>
 
               </div>
@@ -174,4 +174,4 @@ function Leads() {
   );
 }
 
-export default Leads;
+export default ImpSchedule;

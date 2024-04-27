@@ -96,26 +96,42 @@ export const AllNewLead = ({ sendDataToParent, dataFromParent }) => {
     }
   }, [localStorage.getItem("user_id"),apiUrl,DBuUrl]);
   
+  // useEffect(() => {
+  //   const result = leads.filter((lead) => {
+  //     return (
+  //       lead.full_name.toLowerCase().match(search.toLowerCase()) ||
+  //       lead?.agent_details[0]?.agent_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase()) ||
+  //       lead?.service_details[0]?.product_service_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase()) ||
+  //       lead?.lead_source_details[0]?.lead_source_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase()) ||
+  //       lead?.status_details[0]?.status_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase())
+  //     );
+  //   });
+  //   setfilterleads(result);
+  // }, [search]);
+
   useEffect(() => {
     const result = leads.filter((lead) => {
-      return (
-        lead.full_name.toLowerCase().match(search.toLowerCase()) ||
-        lead?.agent_details[0]?.agent_name
-          .toLowerCase()
-          .match(search.toLowerCase()) ||
-        lead?.service_details[0]?.product_service_name
-          .toLowerCase()
-          .match(search.toLowerCase()) ||
-        lead?.lead_source_details[0]?.lead_source_name
-          .toLowerCase()
-          .match(search.toLowerCase()) ||
-        lead?.status_details[0]?.status_name
-          .toLowerCase()
-          .match(search.toLowerCase())
+      return (  
+        (lead.full_name && lead.full_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.agent_details && lead.agent_details[0]?.agent_name && lead.agent_details[0].agent_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.service_details && lead.service_details[0]?.product_service_name && lead.service_details[0].product_service_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.lead_source_details && lead.lead_source_details[0]?.lead_source_name && lead.lead_source_details[0].lead_source_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.status_details && lead.status_details[0]?.status_name && lead.status_details[0].status_name.toLowerCase().includes(search.toLowerCase()))
       );
     });
     setfilterleads(result);
   }, [search]);
+
+
+
   const isAdmin = localStorage.getItem("role") === "admin";
   const commonColumns = [
     {

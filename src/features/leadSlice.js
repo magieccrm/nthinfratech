@@ -26,7 +26,7 @@ export const addlead = createAsyncThunk(
     if (result.success === true) {
       return result;
     } else {
-      return rejectWithValue(result.message);
+      return rejectWithValue(result);
     }
   }
 );
@@ -116,6 +116,7 @@ export const leadSource = createSlice({
       state.message = action.payload.message;
     },
     [addlead.rejected]: (state, action) => {
+      //alert(action.payload)
       state.loading = false;
       state.lead = action.payload;
     },

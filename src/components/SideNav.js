@@ -335,6 +335,13 @@ function SideNav() {
                       </a>
                     </li>
 
+                    <li className="nav-item">
+                      <a href="javascript:void(0);" className={activeItem === 'BusinessWA' ? 'nav-link active' : 'nav-link'}
+                        onClick={() => handleItemClick('BusinessWA')}>
+                        <p>Business WA</p>
+                      </a>
+                    </li>
+
                     {/* <li className="nav-item">
                   <a   href="javascript:void(0);" className={activeItem === 'buysms' ? 'nav-link active' : 'nav-link'}
                   onClick={() => handleItemClick('buysms')}>

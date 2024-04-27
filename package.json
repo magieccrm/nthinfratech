@@ -17,6 +17,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.7.1",
     "moment": "^2.29.4",
+    "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
     "react-big-calendar": "^1.8.5",

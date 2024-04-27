@@ -148,27 +148,43 @@ export default function AllFollowupstable({ sendDataToParent, dataFromParent }) 
     dispatch(getAllStatus());
   }, [localStorage.getItem("user_id")]);
 
+  // useEffect(() => {
+  //   const result = leads?.filter((lead) => {
+  //     return (
+  //       lead.full_name.toLowerCase().match(search.toLowerCase()) ||
+  //       lead?.agent_details[0]?.agent_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase()) ||
+  //       lead?.service_details[0]?.product_service_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase()) ||
+  //       lead?.lead_source_details[0]?.lead_source_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase()) ||
+  //       lead?.status_details[0]?.status_name
+  //         .toLowerCase()
+  //         .match(search.toLowerCase())
+  //     );
+  //   });
+  //   setfilterleads(result);
+  // }, [search]);
+
   useEffect(() => {
-    const result = leads?.filter((lead) => {
-      return (
-        lead.full_name.toLowerCase().match(search.toLowerCase()) ||
-        lead?.agent_details[0]?.agent_name
-          .toLowerCase()
-          .match(search.toLowerCase()) ||
-        lead?.service_details[0]?.product_service_name
-          .toLowerCase()
-          .match(search.toLowerCase()) ||
-        lead?.lead_source_details[0]?.lead_source_name
-          .toLowerCase()
-          .match(search.toLowerCase()) ||
-        lead?.status_details[0]?.status_name
-          .toLowerCase()
-          .match(search.toLowerCase())
+    const result = leads.filter((lead) => {
+      return (  
+        (lead.full_name && lead.full_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.agent_details && lead.agent_details[0]?.agent_name && lead.agent_details[0].agent_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.service_details && lead.service_details[0]?.product_service_name && lead.service_details[0].product_service_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.lead_source_details && lead.lead_source_details[0]?.lead_source_name && lead.lead_source_details[0].lead_source_name.toLowerCase().includes(search.toLowerCase())) ||
+        (lead.status_details && lead.status_details[0]?.status_name && lead.status_details[0].status_name.toLowerCase().includes(search.toLowerCase()))
       );
     });
     setfilterleads(result);
   }, [search]);
-  const isAdmin = localStorage.getItem("role") === "admin";
+
+
+  const isAdmin = localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "TeamLeader";
+  const isAdmin1 = localStorage.getItem("role") === "admin";
   const commonColumns = [
     {
       name: "Name",
@@ -605,14 +621,16 @@ export default function AllFollowupstable({ sendDataToParent, dataFromParent }) 
         </table>
       ) : (
         <>
-          <button className="btn btn-sm shadow_btn btn-success" onClick={exportToPDF}>Export PDF</button>
-          <button className="btn btn-sm shadow_btn btn-success" onClick={exportToExcel}>
-            Export Excel
-          </button>
+          
           {
-            isAdmin ? (<button className="btn shadow_btn btn-sm btn-danger" onClick={DeleteSelected}>
-              Delete
-            </button>) : (<></>)
+            isAdmin1 ? (<><button className="btn btn-sm shadow_btn btn-success" onClick={exportToPDF}>Export PDF</button>
+            <button className="btn btn-sm shadow_btn btn-success" onClick={exportToExcel}>
+              Export Excel
+            </button>
+          <button className="btn shadow_btn btn-sm btn-danger" onClick={DeleteSelected}>
+            Delete
+          </button></>
+              ) : (<></>)
           }
           <DataTable
             responsive

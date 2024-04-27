@@ -52,6 +52,8 @@ import HistoryWtsp from './components/Pages/HistoryWtsp';
 import NewLead from './components/Pages/NewLead';
 import UploadDataDetails from './components/Pages/UploadDataDetails';
 import Housingapi from './components/Pages/Housingapi';
+import ImpSchedule from './components/Pages/ImpSchedule';
+import BusinessWA from './components/Pages/BusinessWA';
   function App() { 
     const [isLoading, setIsLoading] = useState(true);
     const [isLogined, setIsLogined]= useState(false); 
@@ -127,7 +129,7 @@ import Housingapi from './components/Pages/Housingapi';
           <Route path="*" element={<NotFound />} />
           <Route path="/call_log_details/:id" element={<CallLogDetails/>}></Route>  
           <Route path="/Addlead" element={<Addlead />}></Route>
-         <Route path="/Leads" element={<Leads />}></Route>
+          <Route path="/Leads" element={<Leads />}></Route>
 
          <Route path="/GroupSms" element={<GroupSms />}></Route>
 
@@ -142,6 +144,7 @@ import Housingapi from './components/Pages/Housingapi';
 
 
          <Route path="/UploadContent" element={<UploadData />}></Route>
+         <Route path="/BusinessWA" element={<BusinessWA />}></Route>
          <Route path="/UploadContent/:id" element={<UploadDataDetails />}></Route>
 
          <Route path="/buysms" element={<Buysms/>}></Route>
@@ -179,7 +182,9 @@ import Housingapi from './components/Pages/Housingapi';
          <Route path="/Createinvoice" element={<Createinvoice />}></Route>
          <Route path="/Addclient" element={<Addclient />}></Route>
          <Route path="/MultipleForm" element={<MultipleForm />}></Route>
-         <Route path="/followupleads/:id"  element={<Followupage/>} ></Route></>)
+         <Route path="/followupleads/:id"  element={<Followupage/>} ></Route>
+         <Route path="/ImpSchedule/:id"  element={<ImpSchedule/>} ></Route></>
+        )
          :<>
          <Route path="/login" element={<Main  lo={isLogined}/>}></Route>
          </>
