@@ -1390,7 +1390,7 @@ select {
   color: red;
 } */
 .btn:hover {
-  color: #fff;
+  /* color: #fff; */
   text-decoration: none;
 }
 .nav-sidebar .nav-treeview .nav-item>.nav-link:before{

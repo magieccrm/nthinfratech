@@ -54,6 +54,7 @@ import UploadDataDetails from './components/Pages/UploadDataDetails';
 import Housingapi from './components/Pages/Housingapi';
 import ImpSchedule from './components/Pages/ImpSchedule';
 import BusinessWA from './components/Pages/BusinessWA';
+import Importedlead from './components/Pages/Importedlead';
   function App() { 
     const [isLoading, setIsLoading] = useState(true);
     const [isLogined, setIsLogined]= useState(false); 
@@ -73,8 +74,28 @@ import BusinessWA from './components/Pages/BusinessWA';
            setIsLoading(false);  
         }
       };
-   
-      checkToken();
+    checkToken();
+
+
+    
+    //  for ctrl p block and also for right click
+     const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.keyCode === 80) {
+      e.preventDefault();
+    }
+  };
+  document.addEventListener('keydown', handleKeyDown);
+const handleContextMenu = (e) => {
+    e.preventDefault(); 
+  };
+  // document.addEventListener('contextmenu', handleContextMenu);
+  return () => {
+    document.removeEventListener('keydown', handleKeyDown);
+    // document.removeEventListener('contextmenu', handleContextMenu);
+  };
+   // for ctrl p block and also for right click
+
+
     }, []);
         if (!isLogined) {   
       return (           
@@ -130,6 +151,7 @@ import BusinessWA from './components/Pages/BusinessWA';
           <Route path="/call_log_details/:id" element={<CallLogDetails/>}></Route>  
           <Route path="/Addlead" element={<Addlead />}></Route>
           <Route path="/Leads" element={<Leads />}></Route>
+          <Route path="/importedlead" element={<Importedlead />}></Route>
 
          <Route path="/GroupSms" element={<GroupSms />}></Route>
 
